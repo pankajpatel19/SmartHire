@@ -5,14 +5,16 @@ import fs from "fs";
 
 export const UploadResume = async (req, res) => {
   const resume = req.file;
-
+  const ip = req.ip;
   try {
     if (!resume) {
       return res.status(400).json({ message: "Please upload a resume" });
     }
 
-    const data = await resumeParserChain(resume);
-
+    const data = await resumeParserChain(resume, ip);
+    if (data.status === "error") {
+      return res.status(400).json({ message: data.message });
+    }
     const store = await storeEmbedd(data);
 
     return res.status(200).json({ message: "Resume uploaded successfully" });

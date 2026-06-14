@@ -11,7 +11,7 @@ const PersonSchema = z.object({
   name: z.string(),
   email: z.string().email().optional(),
 });
-export const resumeParserChain = async (resume) => {
+export const resumeParserChain = async (resume, ip) => {
   try {
     const loader = new PDFLoader(resume.path);
     const docs = await loader.load();
@@ -26,7 +26,7 @@ export const resumeParserChain = async (resume) => {
     const structuredLlm = groq.withStructuredOutput(PersonSchema);
 
     const prompt = ChatPromptTemplate.fromTemplate(
-      "Extract the name and email from this resume:\n\n{resume}"
+      "Extract the name and email from this resume:\n\n{resume}",
     );
 
     const chain = prompt.pipe(structuredLlm);
@@ -38,14 +38,32 @@ export const resumeParserChain = async (resume) => {
     if (res) {
       const { name, email } = res;
       if (name && email) {
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ ip });
         if (existingUser) {
-          console.log("user already exist : ", existingUser);
+          const now = new Date();
+          const diff = now - existingUser.lastUsed;
+
+          if (diff > 86400) {
+            await User.findOneAndUpdate(
+              { email },
+              { $inc: { toolUseCount: 1 } },
+              { new: true },
+            );
+          } else {
+            return {
+              status: "error",
+              message:
+                "You have already used tool 5 times successfully , come back next day",
+            };
+          }
+          console.log("user already exist ");
         } else {
           await User.create({
             name,
             email,
             role: "user",
+            ip,
+            toolUseCount: 1,
           });
           console.log("user created successfully");
         }
