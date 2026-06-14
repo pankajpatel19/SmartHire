@@ -10,6 +10,9 @@ const pinecone = new Pinecone({
 export const pineconeIndex = pinecone.Index(PINECONE_INDEX);
 
 export const storeEmbedd = async (embedd) => {
+  if (!embedd || !Array.isArray(embedd) || embedd.length === 0) {
+    throw new Error("No documents provided for storing embeddings");
+  }
   try {
     await PineconeStore.fromDocuments(embedd, embedder, {
       pineconeIndex,
@@ -17,5 +20,6 @@ export const storeEmbedd = async (embedd) => {
     return "vector store in db";
   } catch (error) {
     console.log("Error storing embeddings : ", error);
+    throw error;
   }
 };
