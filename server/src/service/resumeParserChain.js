@@ -4,7 +4,6 @@ import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { groq } from "../config/groq.js";
 import { z } from "zod";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { JsonOutputParser } from "@langchain/core/output_parsers";
 import User from "../models/user.model.js";
 
 const PersonSchema = z.object({
