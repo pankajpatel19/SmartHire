@@ -18,16 +18,10 @@ export const getChatResponse = async (req, res) => {
     const result = await vectorStore.similaritySearch(query, 10);
     const context = result.map((doc) => doc.pageContent);
 
-    const prompt = `
-                    You are an AI assistant specialized in analyzing resumes and providing job-related insights. 
-                    Use the following context to answer the user's question accurately. 
-                    If the answer is not in the context, say "I don't have enough information to answer that."
-
+    const prompt = `You are an AI assistant specialized in analyzing resumes and providing job-related insights. Use the following context to answer the user's question accurately. If the answer is not in the context, say "I don't have enough information to answer that." 
                     Context: ${context.join("\n")}
                     Question: ${query}
-
-                    Answer: 
-                    `;
+                    Answer: `;
 
     const response = await groq.invoke(prompt);
     return res.status(200).json({ message: "query", data: response.content });

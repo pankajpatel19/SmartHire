@@ -8,3 +8,11 @@ const connection = {
 };
 
 export const parsingQueue = new Queue("resumeParsing", connection);
+
+export const resumeParse = async (resume, ip) => {
+  await parsingQueue.add("resume_parsing", { resume, ip });
+};
+
+export const storeEmbeddings = async (chunk) => {
+  await parsingQueue.add("storeEmbeddings", { chunk });
+};

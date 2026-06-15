@@ -1,4 +1,5 @@
 // import { generateEmbedding } from "../service/embedding.js";
+import { resumeParse } from "../queue/queue.js";
 import { resumeParserChain } from "../service/resumeParserChain.js";
 import { storeEmbedd } from "../service/storeEmbeddings.js";
 import fs from "fs";
@@ -11,11 +12,7 @@ export const UploadResume = async (req, res) => {
       return res.status(400).json({ message: "Please upload a resume" });
     }
 
-    const data = await resumeParserChain(resume, ip);
-    if (data.status === "error") {
-      return res.status(400).json({ message: data.message });
-    }
-    const store = await storeEmbedd(data);
+    await resumeParse(resume, ip);
 
     return res.status(200).json({ message: "Resume uploaded successfully" });
   } catch (error) {

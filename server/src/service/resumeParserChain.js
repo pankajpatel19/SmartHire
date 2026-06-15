@@ -36,6 +36,7 @@ export const resumeParserChain = async (resume, ip) => {
 
     if (res) {
       const { name, email } = res;
+
       if (name && email) {
         const existingUser = await User.findOne({ ip });
         if (existingUser) {
