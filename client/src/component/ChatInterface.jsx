@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { ChatContext } from "../context/ChatContextProvider";
 
 function ChatInterface() {
-  const { setText } = useContext(ChatContext);
+  const { setText, response } = useContext(ChatContext);
 
   const buttonList = [
     { prompt: "summerize pdf", content: "summerize pdf" },
@@ -19,16 +19,29 @@ function ChatInterface() {
   return (
     <>
       <div className="py-5 text-neutral-900 max-w-[60vw] mx-auto ">
-        <div className="flex flex-col md:flex-row gap-2 justify-center w-full ">
-          {buttonList.map((item, index) => (
-            <button
-              key={index}
-              className="text-left font-medium text-neutral-900 py-2 px-3 bg-zinc-100 rounded-full hover:bg-amber-300 transition-colors cursor-pointer"
-              onClick={() => setText(item.prompt)}
-            >
-              {item.content}
-            </button>
-          ))}
+        {response.length === 0 && (
+          <div className="flex flex-col md:flex-row gap-2 justify-center w-full ">
+            {buttonList.map((item, index) => (
+              <button
+                key={index}
+                className="text-left font-medium text-neutral-900 py-2 px-3 bg-zinc-100 rounded-full hover:bg-amber-300 transition-colors cursor-pointer"
+                onClick={() => setText(item.prompt)}
+              >
+                {item.content}
+              </button>
+            ))}
+          </div>
+        )}
+        <div className="my-8">
+          {response.length > 0 && (
+            <div className="markdown-container  rounded-xl p-4 max-w-[60vw] mx-auto mt-8 border border-neutral-200 shadow-sm">
+              {response.map((item, index) => (
+                <div key={index} className="mb-4 bg-zinc-100 p-2 rounded-lg">
+                  <p>{item}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </>
