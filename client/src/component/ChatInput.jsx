@@ -11,7 +11,7 @@ function ChatInput() {
     const formData = new FormData();
     formData.append("resume", resume);
 
-    const res = await axios.post(
+    await axios.post(
       `${import.meta.env.VITE_API_URL}/resume/upload-resume`,
       formData,
       {
@@ -20,10 +20,10 @@ function ChatInput() {
         },
       },
     );
-    toast.success(res.data.message);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (resume) => {
+    uploadfile(resume);
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/chat/query`,
@@ -50,14 +50,6 @@ function ChatInput() {
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           />
-          {resume && (
-            <button
-              onClick={() => uploadfile(resume)}
-              className="p-3 bg-neutral-200 disabled:bg-neutral-200 disabled:cursor-not-allowed transition-colors"
-            >
-              Upload
-            </button>
-          )}
           <input
             type="file"
             name="resume"
@@ -65,6 +57,11 @@ function ChatInput() {
             className={`${resume ? "hidden" : ""} `}
             onChange={(e) => setResume(e.target.files[0])}
           />
+          {resume && (
+            <span className="p-3 bg-neutral-200 disabled:bg-neutral-200 disabled:cursor-not-allowed transition-colors">
+              {resume ? resume.name : ""}
+            </span>
+          )}
           {text && (
             <button
               className="p-3 bg-neutral-200 disabled:bg-neutral-200 disabled:cursor-not-allowed transition-colors"
@@ -77,7 +74,7 @@ function ChatInput() {
         </div>
         <button
           className="p-3 bg-amber-300 rounded-full disabled:bg-neutral-200 disabled:cursor-not-allowed transition-colors"
-          onClick={handleSubmit}
+          onClick={() => handleSubmit(resume)}
           disabled={text.trim() === "" || !resume}
         >
           Send

@@ -23,11 +23,11 @@ const parseQueueWorker = new Worker(
           console.log("Error from parse data : ", data.message);
           return;
         }
-        await storeEmbeddings(data);
+        await storeEmbeddings(data, ip);
 
         break;
       case "storeEmbeddings":
-        const res = await storeEmbedd(chunk);
+        const res = await storeEmbedd(chunk, ip);
         console.log(res);
 
         break;

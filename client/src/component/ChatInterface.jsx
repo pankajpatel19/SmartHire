@@ -37,7 +37,9 @@ function ChatInterface() {
             <div className="markdown-container  rounded-xl p-4 max-w-[60vw] mx-auto mt-8 border border-neutral-200 shadow-sm">
               {response.map((item, index) => (
                 <div key={index} className="mb-4 bg-zinc-100 p-2 rounded-lg">
-                  <p>{item}</p>
+                  <p>Reasoning : {item.reasoning}</p>
+                  <p>Match : {item.match}</p>
+                  <p>Suggestion : {item.suggestion}</p>
                 </div>
               ))}
             </div>

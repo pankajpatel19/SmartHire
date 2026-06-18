@@ -13,6 +13,6 @@ export const resumeParse = async (resume, ip) => {
   await parsingQueue.add("resume_parsing", { resume, ip });
 };
 
-export const storeEmbeddings = async (chunk) => {
-  await parsingQueue.add("storeEmbeddings", { chunk });
+export const storeEmbeddings = async (chunk, ip) => {
+  await parsingQueue.add("storeEmbeddings", { chunk, ip });
 };

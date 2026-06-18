@@ -38,25 +38,34 @@ export const resumeParserChain = async (resume, ip) => {
       const { name, email } = res;
 
       if (name && email) {
-        const existingUser = await User.findOne({ ip });
+        const existingUser = await User.findOne({ $or: [{ ip }, { email }] });
         if (existingUser) {
           const now = new Date();
-          const diff = now - existingUser.lastUsed;
+          const oneDayInMs = 24 * 60 * 60 * 1000;
+          const diff = now - new Date(existingUser.lastUsed);
 
-          if (diff > 86400) {
-            await User.findOneAndUpdate(
-              { email },
-              { $inc: { toolUseCount: 1 } },
-              { new: true },
-            );
+          if (diff > oneDayInMs) {
+            // More than 24 hours since last usage, reset count
+            existingUser.toolUseCount = 1;
+            existingUser.lastUsed = now;
+            if (ip) existingUser.ip = ip;
+            if (email) existingUser.email = email;
+            await existingUser.save();
           } else {
-            return {
-              status: "error",
-              message:
-                "You have already used tool 5 times successfully , come back next day",
-            };
+            // Within 24 hours, check if count exceeds limit
+            if (existingUser.toolUseCount >= 5) {
+              return {
+                status: "error",
+                message:
+                  "You have already used the tool 5 times successfully, please come back tomorrow.",
+              };
+            } else {
+              existingUser.toolUseCount += 1;
+              existingUser.lastUsed = now;
+              await existingUser.save();
+            }
           }
-          console.log("user already exist ");
+          console.log("user already exists, usage count updated");
         } else {
           await User.create({
             name,
@@ -64,6 +73,7 @@ export const resumeParserChain = async (resume, ip) => {
             role: "user",
             ip,
             toolUseCount: 1,
+            lastUsed: new Date(),
           });
           console.log("user created successfully");
         }
