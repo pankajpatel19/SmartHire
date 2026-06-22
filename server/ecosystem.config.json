@@ -1,0 +1,28 @@
+{
+    "apps": [
+        {
+            "name": "smarthire-worker",
+            "script": "src/queue/worker.js",
+            "instances": 4,
+            "exec_mode": "cluster",
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "env_production": {
+                "NODE_ENV": "production"
+            }
+        },
+        {
+            "name": "smarthire-api",
+            "script": "index.js",
+            "instances": 1,
+            "exec_mode": "fork",
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "env_production": {
+                "NODE_ENV": "production"
+            }
+        }
+    ]
+}

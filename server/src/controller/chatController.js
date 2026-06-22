@@ -17,7 +17,7 @@ export const getChatResponse = async (req, res) => {
     });
 
     //search with similerity
-    const result = await vectorStore.similaritySearch(query, 10);
+    const result = await vectorStore.similaritySearch(query, 10, { namespace });
     const context = result.map((doc) => doc.pageContent);
 
     const prompt = `You are an expert AI assistant specialized in analyzing candidate profiles, resumes, and extracted context to provide accurate job-related insights and answer profile-specific questions.
@@ -61,7 +61,6 @@ export const getChatResponse = async (req, res) => {
       },
     });
     const response = await chain.invoke(prompt);
-
     return res.status(200).json({ message: "query", data: response });
   } catch (error) {
     console.error(error);
